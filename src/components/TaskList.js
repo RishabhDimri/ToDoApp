@@ -1,56 +1,40 @@
 import React from 'react';
-import { View, Text, StyleSheet, SectionList } from 'react-native';
-import TaskCard from './TaskCard';
+import { FlatList, StyleSheet, useColorScheme, View } from 'react-native';
+import TaskItem from './TaskItem';
+import { useApp } from '../context/AppContext';
 
-const TaskList = ({ tasks, onToggleComplete, onToggleImportant, onTaskPress }) => {
-  const sections = [
-    {
-      title: 'In Progress',
-      data: tasks.filter(task => !task.completed),
-    },
-    {
-      title: 'Completed',
-      data: tasks.filter(task => task.completed),
-    },
-  ];
+const TaskList = ({ tasks }) => {
+  const { isGridView } = useApp();
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === 'dark';
+
+  const themeStyles = {
+    container: {
+      backgroundColor: isDarkMode ? '#000000' : '#FFFFFF',
+    }
+  };
 
   return (
-    <SectionList
-      sections={sections}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => (
-        <TaskCard
-          task={item}
-          onToggleComplete={onToggleComplete}
-          onToggleImportant={onToggleImportant}
-          onPress={onTaskPress}
-        />
-      )}
-      renderSectionHeader={({ section: { title } }) => (
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>{title}</Text>
-        </View>
-      )}
-      stickySectionHeadersEnabled={false}
-      contentContainerStyle={styles.listContent}
-    />
+    <View style={[styles.wrapper, themeStyles.container]}>
+      <FlatList
+        data={tasks}
+        key={isGridView ? 'grid' : 'list'}
+        numColumns={isGridView ? 2 : 1}
+        renderItem={({ item }) => <TaskItem task={item} isDarkMode={isDarkMode} />} 
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.container}
+      />
+
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  listContent: {
-    paddingTop: 8,
-    paddingBottom: 20,
+  wrapper: {
+    flex: 1,
   },
-  sectionHeader: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: '#f8f8f8',
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#666',
+  container: {
+    padding: 15,
   },
 });
 

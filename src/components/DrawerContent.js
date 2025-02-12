@@ -172,6 +172,7 @@ const styles = StyleSheet.create({
   },
   profileName: {
     fontSize: 18,
+    fontFamily: 'Outfit-Regular',
     fontWeight: 'bold',
   },
   drawerItems: {
@@ -184,12 +185,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   drawerIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
-    opacity: 0.6,
+      width: 26,  // Increased size from 24 to 28
+      height: 26, // Increased size from 24 to 28
+      marginRight: 12, // Slightly increased margin for better spacing
+      opacity: 1,  // Set to full opacity for stronger visibility
+      tintColor: 'black',  // Ensures high contrast (overrides conditional tint)
+      shadowColor: '#000',  // Adds depth
+      shadowOffset: { width: 2, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 3,
+      elevation: 4, 
   },
   drawerLabel: {
+    fontFamily: 'Outfit-Regular',
     fontSize: 16,
   },
   addListButton: {
@@ -200,6 +208,7 @@ const styles = StyleSheet.create({
   addListText: {
     fontSize: 16,
     fontWeight: 'bold',
+    fontFamily: 'Outfit-Regular',
   },
   todayTasksSection: {
     paddingVertical: 15,
@@ -215,6 +224,7 @@ const styles = StyleSheet.create({
   },
   todayTasksCount: {
     fontSize: 18,
+    fontFamily: 'Outfit-Regular',
     fontWeight: 'bold',
   },
   progressContainer: {
@@ -238,6 +248,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   legendText: {
+    fontFamily: 'Outfit-Regular',
     fontSize: 12,
   },
 });

@@ -27,11 +27,11 @@ const HomeScreen = ({ route }) => {
       {/* Show a search indicator when search is active */}
       {searchVisible && (
         <View style={styles.searchIndicator}>
-          <Text style={{ color: isDarkMode ? '#fff' : '#000' }}>
+          <Text style={{ color: isDarkMode ? '#fff' : '#000', fontFamily: 'Outfit-Regular', }}>
             Searching for: "{searchQuery}"
           </Text>
           <TouchableOpacity onPress={() => { setSearchQuery(''); setSearchVisible(false); }}>
-            <Text style={{ color: 'blue' }}>Clear</Text>
+            <Text style={{ color: 'blue' , fontFamily: 'Outfit-Regular',}}>Clear</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     padding: 10,
     marginTop: 10,
+    fontFamily: 'Outfit-Regular',
   },
   noTasksContainer: {
     flex: 1,
@@ -99,6 +100,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   noTasksText: {
+    fontFamily: 'Outfit-Regular',
     fontSize: 16,
     fontStyle: 'italic',
   },

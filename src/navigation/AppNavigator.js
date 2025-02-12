@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
     height: 24,
   },
   searchInput: {
+    fontFamily: 'Outfit-Regular',
     flex: 1,
     borderBottomWidth: 1,
     borderColor: '#ccc',

@@ -33,7 +33,8 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
   const textColor = isDarkMode ? '#FFFFFF' : '#000000';
   const borderColor = isDarkMode ? '#444' : '#ccc';
   const placeholderColor = isDarkMode ? '#ccc' : '#999';
-  const accentColor = isDarkMode ? '#0A84FF' : '#007AFF';
+  const accentColor = isDarkMode ? '#1e40af' : '#3b82f6';
+  const savebuttonColor= isDarkMode ? '#2ECC71' : '#27AE60'
   const dividerColor = isDarkMode ? '#333333' : '#E5E5E5';
   const calendarBg = isDarkMode ? '#1C1C1E' : '#F5F5F5';
   const completedColor = '#34C759'; // Green color for completed tasks
@@ -138,7 +139,7 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
                 <View style={[
                   styles.buttonWrapper,
                   styles.saveButtonWrapper,
-                  { backgroundColor: accentColor }
+                  { backgroundColor: savebuttonColor }
                 ]}>
                   <Text style={[
                     styles.buttonText,
@@ -337,14 +338,15 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 20,
-    paddingTop: 0,
+    paddingTop: 20,
   },
   nameInput: {
     fontSize: 16,
     padding: 12,
     borderRadius: 8,
-    marginBottom: 20,
+    marginBottom: 10,
     borderWidth: 1,
+    fontFamily: 'Outfit-Regular',
   },
   header: {
     flexDirection: 'row',
@@ -382,6 +384,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     textAlign: 'center',
+    fontFamily: 'Outfit-Regular',
   },
   
   cancelButton: {
@@ -410,6 +413,7 @@ const styles = StyleSheet.create({
   },
   iconText: {
     fontSize: 16,
+    fontFamily: 'Outfit-Regular',
   },
   dateContainer: {
     flex: 1,
@@ -420,6 +424,7 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 16,
     marginLeft: 8,
+    fontFamily: 'Outfit-Regular',
   },
   calendarContainer: {
     borderRadius: 12,
@@ -432,6 +437,7 @@ const styles = StyleSheet.create({
   },
   notesInput: {
     fontSize: 14,
+    fontFamily: 'Outfit-Regular',
     padding: 12,
     borderRadius: 8,
     height: 120,
@@ -451,6 +457,7 @@ const styles = StyleSheet.create({
     color: '#ff3b30',
     fontSize: 16,
     fontWeight: 'bold',
+    fontFamily: 'Outfit-Regular',
   },
   actionButton: {
     flexDirection: 'row',

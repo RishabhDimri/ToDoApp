@@ -165,6 +165,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     padding: 5,
     borderRadius: 4,
+    fontFamily: 'Outfit-Regular',
   },
   flexText: {
     flex: 1,

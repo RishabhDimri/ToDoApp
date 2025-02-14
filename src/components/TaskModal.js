@@ -26,6 +26,9 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
   const [dueDate, setDueDate] = useState(dayjs());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [modalHeight] = useState(new Animated.Value(0));
+  const [steps, setSteps] = useState([]);
+  const [newStep, setNewStep] = useState('');
+  const [showStepInput, setShowStepInput] = useState(false);
 
   // Define colors based on dark mode
   const containerBg = isDarkMode ? '#000000' : '#FFFFFF';
@@ -34,11 +37,11 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
   const borderColor = isDarkMode ? '#444' : '#ccc';
   const placeholderColor = isDarkMode ? '#ccc' : '#999';
   const accentColor = isDarkMode ? '#1e40af' : '#3b82f6';
-  const savebuttonColor= isDarkMode ? '#2ECC71' : '#27AE60'
+  const savebuttonColor= isDarkMode ? '#2ECC71' : '#27AE60';
   const dividerColor = isDarkMode ? '#333333' : '#E5E5E5';
   const calendarBg = isDarkMode ? '#1C1C1E' : '#F5F5F5';
-  const completedColor = '#34C759'; // Green color for completed tasks
-  const importantColor = '#FFD700'; // Yellow color for important tasks
+  const completedColor = '#34C759';
+  const importantColor = '#FFD700';
 
   useEffect(() => {
     if (task) {
@@ -49,6 +52,7 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
       setHasReminder(task.hasReminder || false);
       setHasRepeat(task.hasRepeat || false);
       setDueDate(task.dueDate ? dayjs(task.dueDate) : dayjs());
+      setSteps(task.steps || []);
     }
   }, [task]);
 
@@ -59,6 +63,29 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
       useNativeDriver: false,
     }).start();
   }, [showDatePicker]);
+
+  const handleAddStep = () => {
+    if (newStep.trim()) {
+      const newStepItem = {
+        id: Date.now().toString(),
+        text: newStep.trim(),
+        completed: false,
+      };
+      setSteps([...steps, newStepItem]);
+      setNewStep('');
+      setShowStepInput(false);
+    }
+  };
+
+  const handleStepComplete = (stepId) => {
+    setSteps(steps.map(step =>
+      step.id === stepId ? { ...step, completed: !step.completed } : step
+    ));
+  };
+
+  const handleStepDelete = (stepId) => {
+    setSteps(steps.filter(step => step.id !== stepId));
+  };
 
   const handleSave = () => {
     if (!taskName.trim()) {
@@ -75,6 +102,7 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
       hasReminder: hasReminder,
       hasRepeat: hasRepeat,
       dueDate: dueDate ? dueDate.format('YYYY-MM-DD') : null,
+      steps: steps,
       updatedAt: new Date().toISOString(),
     };
 
@@ -106,7 +134,7 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
     >
       <View style={styles.modalOverlay}>
         <View style={[styles.modalContainer, { backgroundColor: containerBg }]}>
-          {/* Fixed Header */}
+          {/* Header */}
           <View style={[styles.header, { backgroundColor: containerBg }]}>
             <View style={styles.headerSide}>
               <TouchableOpacity 
@@ -148,9 +176,7 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
                   ]}>Save</Text>
                 </View>
               </TouchableOpacity>
-          </View>
-
-
+            </View>
           </View>
 
           {/* Scrollable Content */}
@@ -213,13 +239,131 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
 
               {/* Add Step Section */}
               <View style={styles.section}>
-                <TouchableOpacity style={styles.iconButton}>
+                <TouchableOpacity 
+                  style={styles.iconButton}
+                  onPress={() => setShowStepInput(true)}
+                >
                   <Image 
                     source={require('../assets/plus.png')}
                     style={[styles.icon, { tintColor: isDarkMode ? '#FFFFFF' : '#000000' }]}
                   />
                   <Text style={[styles.iconText, { color: textColor }]}>Add Step</Text>
                 </TouchableOpacity>
+
+                {/* Steps List */}
+              {steps.length > 0 && (
+                <View style={styles.stepsList}>
+                  {steps.map((step, index) => (
+                    <View key={step.id}>
+                      {/* Top separator line for first item */}
+                      {index === 0 && (
+                        <View style={[styles.stepSeparator, { backgroundColor: dividerColor }]} />
+                      )}
+                      
+                      <View style={styles.stepItem}>
+                        <TouchableOpacity
+                          style={styles.stepCheckbox}
+                          onPress={() => handleStepComplete(step.id)}
+                        >
+                          <Image 
+                            source={step.completed 
+                              ? require('../assets/select.png')
+                              : require('../assets/square.png')}
+                            style={[
+                              styles.stepIcon, 
+                              { tintColor: step.completed ? completedColor : (isDarkMode ? '#FFFFFF' : '#000000') }
+                            ]}
+                          />
+                        </TouchableOpacity>
+                        
+                        <Text style={[
+                          styles.stepText,
+                          { color: textColor },
+                          step.completed && styles.completedStepText
+                        ]}>
+                          {step.text}
+                        </Text>
+                        
+                        <TouchableOpacity
+                          style={[
+                            styles.deleteStepButton,
+                            { backgroundColor: isDarkMode ? '#333' : '#F5F5F5' }
+                          ]}
+                          onPress={() => handleStepDelete(step.id)}
+                        >
+                          <Image 
+                            source={require('../assets/trash.png')}
+                            style={[
+                              styles.deleteStepIcon, 
+                              { tintColor: isDarkMode ? '#FF453A' : '#FF3B30' }
+                            ]}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                      
+                      {/* Bottom separator line */}
+                      {index === steps.length - 1 && (
+                        <View style={[styles.stepSeparator, styles.lastStepSeparator, { backgroundColor: dividerColor }]} />
+                      )}
+                      {/* <View style={[styles.stepSeparator, { backgroundColor: dividerColor }]} /> */}
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {/* Step Input */}
+              {showStepInput && (
+                <View style={[
+                  styles.stepInputContainer,
+                  { backgroundColor: isDarkMode ? '#1C1C1E' : '#F5F5F5' }
+                ]}>
+                  <TextInput
+                    style={[styles.stepInput, { 
+                      backgroundColor: inputBg,
+                      color: textColor,
+                      borderColor
+                    }]}
+                    value={newStep}
+                    onChangeText={setNewStep}
+                    placeholder="Enter step..."
+                    placeholderTextColor={placeholderColor}
+                    onSubmitEditing={handleAddStep}
+                    autoFocus
+                  />
+                  <View style={styles.stepInputButtons}>
+                    <TouchableOpacity
+                      style={[
+                        styles.stepButton, 
+                        { 
+                          borderColor: dividerColor,
+                          backgroundColor: isDarkMode ? '#333' : '#F5F5F5'
+                        }
+                      ]}
+                      onPress={() => setShowStepInput(false)}
+                    >
+                      <Text style={[
+                        styles.stepButtonText, 
+                        { color: isDarkMode ? '#FF453A' : '#FF3B30' }
+                      ]}>Cancel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[
+                        styles.stepButton,
+                        {
+                          backgroundColor: accentColor,
+                          borderColor: accentColor
+                        }
+                      ]}
+                      onPress={handleAddStep}
+                    >
+                      <Text style={[
+                        styles.stepButtonText,
+                        { color: '#FFFFFF' }
+                      ]}>Add</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )}
               </View>
               <View style={[styles.divider, { backgroundColor: dividerColor }]} />
 
@@ -261,7 +405,7 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
 
               {/* Calendar Section */}
               {showDatePicker && (
-                <View style={[styles.calendarContainer, { backgroundColor: calendarBg }]}>
+                <View style={[styles.calendarContainer, { backgroundColor: isDarkMode ? '#FFFFFF' : calendarBg }]}>
                   <DateTimePicker
                     mode="single"
                     date={dueDate || dayjs()}
@@ -272,9 +416,11 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
                       }
                     }}
                     minDate={dayjs()}
-                    headerButtonColor={accentColor}
-                    selectedItemColor={accentColor}
-                    markColor={accentColor}
+                    headerButtonColor={isDarkMode ? '#1e40af' : accentColor}
+                    selectedItemColor={isDarkMode ? '#1e40af' : accentColor}
+                    markColor={isDarkMode ? '#1e40af' : accentColor}
+                    textColor={isDarkMode ? '#000000' : textColor}
+                    style={{ backgroundColor: isDarkMode ? '#FFFFFF' : calendarBg }}
                   />
                 </View>
               )}
@@ -283,16 +429,16 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
               {/* Repeat Section */}
               <View style={styles.section}>
                 <TouchableOpacity 
-                  style={styles.iconButton}
-                  onPress={() => setHasRepeat(!hasRepeat)}
-                >
-                  <Image 
-                    source={require('../assets/repeat.png')}
-                    style={[styles.icon, { tintColor: hasRepeat ? accentColor : (isDarkMode ? '#FFFFFF' : '#000000') }]}
-                  />
-                  <Text style={[styles.iconText, { color: hasRepeat ? accentColor : textColor }]}>Repeat</Text>
-                </TouchableOpacity>
-              </View>
+                    style={styles.iconButton}
+                    onPress={() => setHasRepeat(!hasRepeat)}
+                  >
+                    <Image 
+                      source={require('../assets/repeat.png')}
+                      style={[styles.icon, { tintColor: hasRepeat ? accentColor : (isDarkMode ? '#FFFFFF' : '#000000') }]}
+                    />
+                    <Text style={[styles.iconText, { color: hasRepeat ? accentColor : textColor }]}>Repeat</Text>
+                  </TouchableOpacity>
+                </View>
               <View style={[styles.divider, { backgroundColor: dividerColor }]} />
 
               {/* Task Notes Input */}
@@ -317,6 +463,7 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
     </Modal>
   );
 };
+
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
@@ -357,15 +504,15 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     borderBottomWidth: 1,
   },
-  
   headerSide: {
     paddingHorizontal: 16,
   },
-  
   headerButton: {
     minWidth: 80,
   },
-  
+  lastStepSeparator: {
+    marginBottom: -20, 
+  },
   buttonWrapper: {
     borderRadius: 8,
     paddingVertical: 8,
@@ -375,22 +522,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'transparent',
   },
-  
   saveButtonWrapper: {
     borderWidth: 0,
   },
-  
   buttonText: {
     fontSize: 16,
     fontWeight: '500',
     textAlign: 'center',
     fontFamily: 'Outfit-Regular',
   },
-  
   cancelButton: {
     fontWeight: '400',
   },
-  
   saveButton: {
     fontWeight: '600',
   },
@@ -430,6 +573,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 12,
     marginVertical: 8,
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   divider: {
     height: 1,
@@ -468,6 +617,91 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     flex: 0.48,
   },
+  stepsList: {
+    marginTop: 16,
+  },
+  stepItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 4,
+    position: 'relative',
+  },
+  stepConnectorContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 12,
+    bottom: 0,
+    width: 2,
+    alignItems: 'center',
+  },
+  stepConnector: {
+    width: 0,
+    height: '100%',
+    position: 'absolute',
+  },
+  stepSeparator: {
+    height: 2,
+    width: '100%',
+    opacity: 0.7,
+  },
+  stepCheckbox: {
+    padding: 4,
+    marginRight: 4,
+    zIndex: 1,
+  },
+  stepIcon: {
+    width: 22,
+    height: 22,
+  },
+  stepText: {
+    flex: 1,
+    fontSize: 16,
+    marginLeft: 8,
+    fontFamily: 'Outfit-Regular',
+  },
+  completedStepText: {
+    textDecorationLine: 'line-through',
+    opacity: 0.7,
+  },
+  deleteStepButton: {
+    padding: 8,
+    borderRadius: 8,
+    marginLeft: 8,
+  },
+  deleteStepIcon: {
+    width: 18,
+    height: 18,
+  },
+  stepInputContainer: {
+    marginTop: 16,
+    padding: 16,
+    borderRadius: 12,
+  },
+  stepInput: {
+    fontSize: 16,
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    fontFamily: 'Outfit-Regular',
+  },
+  stepInputButtons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: 12,
+    gap: 8,
+  },
+  stepButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  stepButtonText: {
+    fontSize: 16,
+    fontWeight: '500',
+    fontFamily: 'Outfit-Regular',
+  }
 });
 
 export default TaskModal;

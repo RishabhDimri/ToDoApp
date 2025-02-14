@@ -124,9 +124,8 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     fontSize: 16,
-    fontWeight: 'bold',
     color: '#fff',
-    fontFamily: 'Outfit-Regular',
+    fontFamily: 'Outfit-Bold',
   },
 });
 

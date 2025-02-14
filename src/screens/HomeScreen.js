@@ -89,10 +89,9 @@ const styles = StyleSheet.create({
   },
   sectionHeader: {
     fontSize: 18,
-    fontWeight: 'bold',
     padding: 10,
     marginTop: 10,
-    fontFamily: 'Outfit-Regular',
+    fontFamily: 'Outfit-Bold',
   },
   noTasksContainer: {
     flex: 1,

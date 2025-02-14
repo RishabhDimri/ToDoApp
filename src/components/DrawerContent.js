@@ -77,7 +77,7 @@ const DrawerContent = (props) => {
               style={[
                 styles.drawerLabel,
                 { color: isDarkMode ? '#fff' : '#666' },
-                currentRoute === item.route && { fontWeight: 'bold', color: isDarkMode ? '#4CAF50' : 'black' }
+                currentRoute === item.route && {  fontFamily:"Outfit-Bold",color: isDarkMode ? '#4CAF50' : 'black' }
               ]}
             >
               {item.name}
@@ -95,7 +95,7 @@ const DrawerContent = (props) => {
 
       <View style={[styles.todayTasksSection, { backgroundColor: isDarkMode ? '#111' : 'white' }]}>
         <View style={styles.todayTasksHeader}>
-          <Text style={[styles.todayTasksText, { color: isDarkMode ? '#fff' : '#666' }]}>
+          <Text style={[styles.todayTasksText, { fontFamily:"Outfit-Regular", color: isDarkMode ? '#fff' : '#666' }]}>
             Today Tasks: 
           </Text>
           <Text style={[styles.todayTasksCount, { color: isDarkMode ? '#fff' : '#333' }]}>
@@ -104,48 +104,48 @@ const DrawerContent = (props) => {
         </View>
 
         <View style={styles.progressContainer}>
-          <Svg height="150" width="150" viewBox="0 0 100 100">
-            {totalTasks === 0 ? (
-              // If no tasks, show empty circle
+        <Svg height="150" width="150" viewBox="0 0 100 100">
+          {totalTasks === 0 ? (
+            // If no tasks, show empty circle
+            <Circle 
+              cx="50" 
+              cy="50" 
+              r="45" 
+              stroke="#e6e6e6" 
+              strokeWidth="10" 
+              fill="none" 
+            />
+          ) : (
+            <>
+              {/* Background circle */}
               <Circle 
                 cx="50" 
                 cy="50" 
                 r="45" 
-                stroke="#e6e6e6" 
+                stroke={completedTasks === totalTasks ? "#4CAF50" : "#1B5E20"} // Light green if all tasks are done
                 strokeWidth="10" 
                 fill="none" 
               />
-            ) : (
-              <>
-                {/* Background circle */}
-                <Circle 
-                  cx="50" 
-                  cy="50" 
-                  r="45" 
-                  stroke="#1B5E20" // Dark green for pending
-                  strokeWidth="10" 
-                  fill="none" 
+              {/* Completion arc */}
+              {completedTasks > 0 && (
+                <Path
+                  d={generateArcPath(completedTasks / totalTasks)}
+                  fill="none"
+                  stroke="#4CAF50" // Always light green for completed portion
+                  strokeWidth="10"
                 />
-                {/* Completion arc */}
-                {completedTasks > 0 && (
-                  <Path
-                    d={generateArcPath(completedTasks / totalTasks)}
-                    fill="none"
-                    stroke="#4CAF50" // Light green for completed
-                    strokeWidth="10"
-                  />
-                )}
-              </>
-            )}
-          </Svg>
+              )}
+            </>
+          )}
+        </Svg>
 
           <View style={styles.legendContainer}>
             <View style={styles.legendItem}>
-              <View style={[styles.legendColor, { backgroundColor: '#1B5E20' }]} /> {/* Dark green for pending */}
+              <View style={[styles.legendColor, { backgroundColor: '#4CAF50' }]} /> {/* Dark green for pending */}
               <Text style={[styles.legendText, { color: isDarkMode ? '#fff' : '#666' }]}>Done</Text>
             </View>
             <View style={styles.legendItem}>
-              <View style={[styles.legendColor, { backgroundColor: '#4CAF50' }]} /> {/* Light green for completed */}
+              <View style={[styles.legendColor, { backgroundColor: '#1B5E20' }]} /> {/* Light green for completed */}
               <Text style={[styles.legendText, { color: isDarkMode ? '#fff' : '#666' }]}>Pending</Text>
             </View>
           </View>
@@ -172,8 +172,7 @@ const styles = StyleSheet.create({
   },
   profileName: {
     fontSize: 18,
-    fontFamily: 'Outfit-Regular',
-    fontWeight: 'bold',
+    fontFamily: 'Outfit-Bold',
   },
   drawerItems: {
     marginBottom: 10,
@@ -207,8 +206,7 @@ const styles = StyleSheet.create({
   },
   addListText: {
     fontSize: 16,
-    fontWeight: 'bold',
-    fontFamily: 'Outfit-Regular',
+    fontFamily: 'Outfit-Bold',
   },
   todayTasksSection: {
     paddingVertical: 15,
@@ -224,8 +222,7 @@ const styles = StyleSheet.create({
   },
   todayTasksCount: {
     fontSize: 18,
-    fontFamily: 'Outfit-Regular',
-    fontWeight: 'bold',
+    fontFamily: 'Outfit-Bold',
   },
   progressContainer: {
     alignItems: 'center',

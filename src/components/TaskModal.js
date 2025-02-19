@@ -43,7 +43,8 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
   const completedColor = '#34C759';
   const importantColor = '#FFD700';
 
-  useEffect(() => {
+  // Reset modal state function
+  const resetModalState = () => {
     if (task) {
       setTaskName(task.name || '');
       setTaskNotes(task.notes || '');
@@ -53,8 +54,23 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
       setHasRepeat(task.hasRepeat || false);
       setDueDate(task.dueDate ? dayjs(task.dueDate) : dayjs());
       setSteps(task.steps || []);
+      setShowDatePicker(false);
+      setShowStepInput(false);
+      setNewStep('');
     }
-  }, [task]);
+  };
+
+  // Handle close without saving
+  const handleClose = () => {
+    resetModalState();
+    onClose();
+  };
+
+  useEffect(() => {
+    if (task && visible) {
+      resetModalState();
+    }
+  }, [task, visible]);
 
   useEffect(() => {
     Animated.timing(modalHeight, {
@@ -130,7 +146,7 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
       visible={visible}
       transparent
       animationType="slide"
-      onRequestClose={onClose}
+      onRequestClose={handleClose}
     >
       <View style={styles.modalOverlay}>
         <View style={[styles.modalContainer, { backgroundColor: containerBg }]}>
@@ -138,7 +154,7 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
           <View style={[styles.header, { backgroundColor: containerBg }]}>
             <View style={styles.headerSide}>
               <TouchableOpacity 
-                onPress={onClose}
+                onPress={handleClose}
                 style={styles.headerButton}
                 activeOpacity={0.7}
               >
@@ -302,10 +318,9 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
                       </View>
                       
                       {/* Bottom separator line */}
-                      {index === steps.length - 1 && (
+                      {index === steps.length && (
                         <View style={[styles.stepSeparator, styles.lastStepSeparator, { backgroundColor: dividerColor }]} />
                       )}
-                      {/* <View style={[styles.stepSeparator, { backgroundColor: dividerColor }]} /> */}
                     </View>
                   ))}
                 </View>
@@ -328,7 +343,6 @@ const TaskModal = ({ task, visible, onClose, isDarkMode }) => {
                     placeholder="Enter step..."
                     placeholderTextColor={placeholderColor}
                     onSubmitEditing={handleAddStep}
-                    autoFocus
                   />
                   <View style={styles.stepInputButtons}>
                     <TouchableOpacity
